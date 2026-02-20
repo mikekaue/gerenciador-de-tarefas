@@ -1,32 +1,6 @@
-import json
+from menu import escolher_opcao
 
-def salvar_tarefas(tarefas):
-    with open('tarefas.json', 'w') as arquivo:
-        json.dump(tarefas, arquivo)
-
-def carregar_tarefas():
-    try:
-        with open('tarefas.json', 'r') as arquivo:
-            tarefas = json.load(arquivo)
-            return tarefas
-    except FileNotFoundError:
-        return []
-
-def escolher_opcao():
-        print('1 - Adicionar tarefa')
-        print('2 - Listar tarefas')
-        print('3 - Remover tarefa')
-        print('4 - Sair')
-        opcao = input('Escolha uma opção: ')
-        return opcao
-
-def listar_tarefas(tarefas):
-    if len(tarefas) == 0:
-        print('Nenhuma tarefa cadastrada.')
-    else:
-        for i, tarefa in enumerate(tarefas, start=1):
-            print(f'{i}. {tarefa}')
-        print(f'Total de tarefas: {len(tarefas)}')
+from tarefas import salvar_tarefas, carregar_tarefas, listar_tarefas
 
 tarefas = carregar_tarefas()
 
@@ -47,6 +21,10 @@ while True:
 
     elif opcao == '3':
         listar_tarefas(tarefas)
+
+        if len(tarefas) == 0:
+            continue
+
         try:
             indice = int(input('Digite o número da tarefa a ser removida: ')) - 1
         except ValueError:
@@ -54,8 +32,17 @@ while True:
             continue
             
         if 0 <= indice < len(tarefas):
-            tarefas.pop(indice)
-            salvar_tarefas(tarefas)
+            tarefa_escolhida = tarefas[indice]
+            print(f'Você escolheu remover a tarefa: "{tarefa_escolhida}')
+
+            confirmacao = input('Confirmar remoção? (s/n): ').lower()
+
+            if confirmacao == 's':
+                tarefas.pop(indice)
+                salvar_tarefas(tarefas)
+                print('Tarefa removida com sucesso.')
+            else:
+                print('Remoção cancelada.')
         else:
             print('Número da tarefa inválido. Tente novamente.')
 
